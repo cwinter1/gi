@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}GI Food Analyser{% endblock %}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #1565c0;
+      --blue-lt: #e3f2fd;
+      --green:   #2e7d32;
+      --green-lt:#e8f5e9;
+      --red:     #c62828;
+      --red-lt:  #ffebee;
+      --gold:    #f57f17;
+      --gold-lt: #fff8e1;
+      --gray:    #f5f5f5;
+      --border:  #e0e0e0;
+      --text:    #212121;
+      --muted:   #757575;
+      --white:   #ffffff;
+      --shadow:  0 2px 8px rgba(0,0,0,.12);
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--gray);
+      color: var(--text);
+      direction: rtl;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--blue);
+      color: var(--white);
+      padding: .75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+    nav .brand { font-size: 1.15rem; font-weight: 700; }
+    nav .nav-links a, nav .nav-links button {
+      color: var(--white);
+      text-decoration: none;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.5);
+      border-radius: 6px;
+      padding: .3rem .75rem;
+      cursor: pointer;
+      font-size: .9rem;
+      margin-right: .5rem;
+    }
+    nav .nav-links a:hover, nav .nav-links button:hover {
+      background: rgba(255,255,255,.15);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .55rem 1.1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .95rem;
+      font-weight: 600;
+      transition: filter .15s;
+    }
+    .btn:hover { filter: brightness(.92); }
+    .btn-primary   { background: var(--blue);  color: var(--white); }
+    .btn-success   { background: var(--green); color: var(--white); }
+    .btn-danger    { background: var(--red);   color: var(--white); }
+    .btn-outline   { background: var(--white); color: var(--blue); border: 2px solid var(--blue); }
+    .btn-sm        { padding: .3rem .65rem; font-size: .82rem; }
+
+    /* FORM ELEMENTS */
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: .55rem .75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      direction: rtl;
+      background: var(--white);
+    }
+    input:focus { outline: none; border-color: var(--blue); }
+
+    /* ALERT */
+    .alert {
+      padding: .75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    .alert-error   { background: var(--red-lt);   color: var(--red);   }
+    .alert-success { background: var(--green-lt); color: var(--green); }
+    .alert-info    { background: var(--blue-lt);  color: var(--blue);  }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .container { padding: 0 .5rem; }
+      .card { padding: 1rem; }
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% if session.logged_in %}
+<nav>
+  <span class="brand">🥗 GI Food Analyser</span>
+  <div class="nav-links">
+    <form action="/logout" method="get" style="display:inline">
+      <button type="submit">יציאה</button>
+    </form>
+  </div>
+</nav>
+{% endif %}
+
+{% block body %}{% endblock %}
+</body>
+</html>

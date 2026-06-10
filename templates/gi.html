@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}ניתוח אינדקס גליקמי — GI Food Analyser{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Upload zone ── */
+  .upload-zone {
+    border: 2.5px dashed var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    background: var(--gray);
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--blue);
+    background: var(--blue-lt);
+  }
+  .upload-zone .icon { font-size: 3rem; display: block; margin-bottom: .5rem; }
+  .upload-zone p    { color: var(--muted); font-size: .95rem; }
+
+  /* ── Preview ── */
+  #preview-wrap { display: none; text-align: center; margin-top: 1rem; }
+  #preview-wrap img {
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    object-fit: contain;
+  }
+
+  /* ── Result markdown ── */
+  .gi-result {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: .97rem;
+    line-height: 1.7;
+  }
+  .gi-result h1, .gi-result h2, .gi-result h3 {
+    margin: 1rem 0 .4rem;
+    color: var(--blue);
+  }
+  .gi-result strong { color: var(--text); }
+  .gi-result hr { border: none; border-top: 1.5px solid var(--border); margin: 1rem 0; }
+
+  /* ── Spinner ── */
+  .spinner-wrap { display: none; text-align: center; padding: 2rem; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 5px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin: 0 auto .75rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Result photo ── */
+  .result-photo {
+    max-width: 100%;
+    max-height: 240px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: block;
+    margin: 0 auto 1.25rem;
+    object-fit: contain;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  <div class="card">
+    <h2 style="margin-bottom:1rem;">🥗 ניתוח אינדקס גליקמי</h2>
+    <p style="color:var(--muted);margin-bottom:1.5rem;font-size:.93rem;">
+      צלמ/י את הצלחת שלך ותקבל/י הערכת GI ועומס גליקמי מפורטת תוך שניות.
+    </p>
+
+    {% if error %}
+    <div class="alert alert-error" style="margin-bottom:1rem;">{{ error }}</div>
+    {% endif %}
+
+    <form id="gi-form" action="/analyse" method="post" enctype="multipart/form-data">
+      <input type="file" id="photo-input" name="photo"
+             accept="image/*" capture="environment"
+             style="display:none" required>
+
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('photo-input').click()">
+        <span class="icon">📷</span>
+        <strong>לחץ/י לצילום או בחירת תמונה</strong>
+        <p>JPEG · PNG · WEBP · עד 10 MB</p>
+      </div>
+
+      <div id="preview-wrap">
+        <img id="preview-img" src="" alt="תצוגה מקדימה">
+        <p style="color:var(--muted);font-size:.85rem;margin-top:.4rem;" id="file-name"></p>
+      </div>
+
+      <div class="spinner-wrap" id="spinner-wrap">
+        <div class="spinner"></div>
+        <p style="color:var(--muted);">מנתח את הצלחת… אנא המתן/י</p>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="analyse-btn"
+              style="width:100%;margin-top:1.25rem;justify-content:center;display:none;">
+        🔍 נתח את הצלחת
+      </button>
+    </form>
+  </div>
+
+  {% if result %}
+  <div class="card" id="result-card">
+    <h3 style="margin-bottom:1rem;">📊 תוצאות הניתוח</h3>
+
+    {% if photo_b64 %}
+    <img class="result-photo"
+         src="data:{{ photo_mime }};base64,{{ photo_b64 }}"
+         alt="הצלחת שנותחה">
+    {% endif %}
+
+    <div class="gi-result" id="gi-result-text">{{ result }}</div>
+
+    <div style="margin-top:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+      <a href="/" class="btn btn-outline">🔄 ניתוח חדש</a>
+      <button class="btn btn-outline" onclick="copyResult()">📋 העתק</button>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  const input    = document.getElementById('photo-input');
+  const zone     = document.getElementById('upload-zone');
+  const preview  = document.getElementById('preview-wrap');
+  const previewImg = document.getElementById('preview-img');
+  const fileName = document.getElementById('file-name');
+  const analyseBtn = document.getElementById('analyse-btn');
+  const form     = document.getElementById('gi-form');
+  const spinner  = document.getElementById('spinner-wrap');
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    previewImg.src = url;
+    fileName.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
+    preview.style.display = 'block';
+    analyseBtn.style.display = 'flex';
+    zone.style.display = 'none';
+  });
+
+  // Drag-and-drop
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) { input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); }
+  });
+
+  form.addEventListener('submit', () => {
+    analyseBtn.style.display = 'none';
+    preview.style.display = 'none';
+    spinner.style.display = 'block';
+  });
+
+  {% if result %}
+  // Scroll to results
+  document.getElementById('result-card').scrollIntoView({ behavior: 'smooth' });
+  {% endif %}
+
+  function copyResult() {
+    const text = document.getElementById('gi-result-text').innerText;
+    navigator.clipboard.writeText(text).then(() => alert('הועתק!'));
+  }
+</script>
+{% endblock %}

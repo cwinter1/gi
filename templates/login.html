@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}כניסה — GI Food Analyser{% endblock %}
+
+{% block head %}
+<style>
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .login-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.15);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+  .login-card h1 { font-size: 1.5rem; color: var(--blue); margin-bottom: .25rem; }
+  .login-card p  { color: var(--muted); margin-bottom: 1.5rem; font-size: .95rem; }
+  .form-group { margin-bottom: 1rem; text-align: right; }
+  .form-group label { display: block; font-size: .88rem; font-weight: 600;
+                      margin-bottom: .35rem; color: var(--text); }
+  .form-group input { width: 100%; }
+  .btn-login { width: 100%; padding: .7rem; font-size: 1rem; margin-top: .5rem; }
+  .shake { animation: shake .35s ease; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-card" id="login-card">
+  <div style="font-size:3rem;margin-bottom:.5rem">🥗</div>
+  <h1>GI Food Analyser</h1>
+  <p>כניסה לאפליקציה</p>
+
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST" action="/login" id="login-form">
+    <div class="form-group">
+      <label for="username">שם משתמש</label>
+      <input type="text" id="username" name="username" autocomplete="username" autofocus required>
+    </div>
+    <div class="form-group">
+      <label for="password">סיסמה</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-login">כניסה</button>
+  </form>
+</div>
+
+<script>
+  {% if error %}
+  document.getElementById('login-card').classList.add('shake');
+  {% endif %}
+</script>
+{% endblock %}
