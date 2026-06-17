@@ -50,6 +50,22 @@ def logout():
     return redirect(url_for("login"))
 
 
+@app.route("/finance/")
+@app.route("/finance/index.html")
+def finance_index():
+    return render_template("finance/index.html")
+
+
+@app.route("/finance/budget.html")
+def finance_budget():
+    return render_template("finance/budget.html")
+
+
+@app.route("/finance/overdraft.html")
+def finance_overdraft():
+    return render_template("finance/overdraft.html")
+
+
 @app.route("/analyse", methods=["POST"])
 @require_login
 def analyse():
