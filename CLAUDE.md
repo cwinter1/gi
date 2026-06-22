@@ -36,11 +36,11 @@ Income: ₪31,437 (Chris ₪16,500 + Katya ₪14,500 + allowances ₪437)
 Expenses ₪30,743:
 - משכנתא+הלוואות ₪8,299 (includes ריבית כה"ש ₪387 instead of loan ₪875)
 - קבועים ₪3,812
-- ילדים ₪3,233 (base ₪2,083 + camping ₪100 + surf ₪550 + birthdays ₪500)
+- ילדים ₪2,885 (base ₪1,735 + camping ₪100 + surf ₪550 + birthdays ₪500) — צהרון ₪348 removed
 - משתנה ₪8,542
 - חיסכון ₪6,857 (Thailand ₪2,857 + pension ₪3,000 + emergency ₪1,000)
 
-Surplus: ₪694 → overdraft paydown
+Surplus: ₪1,042 → overdraft paydown (3.3% of income)
 
 Overdraft: ₪64,000 at 7.25% — no loan. Paying down from surplus (~92 months).
 
