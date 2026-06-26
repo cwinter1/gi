@@ -55,4 +55,4 @@ Overdraft: ₪64,000 at 7.25% — no loan. Paying down from surplus (~92 months)
 - The `js` patch target strings must match EXACTLY including whitespace/newlines
 - budget.html donut uses raw ₪ amounts; index.html donut uses percentages
 - After patching, always verify with `node decrypt-inspect.js` before deploying
-- overdraft.html has NOT been updated yet — still shows old loan plan
+- overdraft.html updated: self-managed paydown, ₪1,042/month surplus → OD, September 2031 close
